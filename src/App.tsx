@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import config from './config/credentials';
+// import config from './config/credentials';
 
 async function getHelloMsg(name: string): Promise<string> {
   const url = `/.netlify/functions/hello?name=${name}`;
@@ -20,32 +20,32 @@ declare global {
   }
 }
 
-export function load(callback: any) {
-  window.gapi.client.load("sheets", "v4", () => {
-    window.gapi.client.sheets.spreadsheets.values
-      .get({
-        spreadsheetId: config.spreadsheetId,
-        range: "Sheet1!A2:T"
-      })
-      .then(
-        (response: any) => {
-          console.log(response);
-          const data = response.result.values;
-          const cars = data.map((car: any) => ({
-            year: car[0],
-            make: car[1],
-            model: car[2]
-          })) || [];
-          callback({
-            cars
-          });
-        },
-        (response: any) => {
-          callback(false, response.result.error);
-        }
-      );
-  });
-}
+// export function load(callback: any) {
+//   window.gapi.client.load("sheets", "v4", () => {
+//     window.gapi.client.sheets.spreadsheets.values
+//       .get({
+//         spreadsheetId: config.spreadsheetId,
+//         range: "Sheet1!A2:T"
+//       })
+//       .then(
+//         (response: any) => {
+//           console.log(response);
+//           const data = response.result.values;
+//           const cars = data.map((car: any) => ({
+//             year: car[0],
+//             make: car[1],
+//             model: car[2]
+//           })) || [];
+//           callback({
+//             cars
+//           });
+//         },
+//         (response: any) => {
+//           callback(false, response.result.error);
+//         }
+//       );
+//   });
+// }
 
 class App extends Component<{}, { cars: any[], error: any, helloMsg: string}> {
   constructor(props: any) {
@@ -64,19 +64,19 @@ class App extends Component<{}, { cars: any[], error: any, helloMsg: string}> {
       this.setState({ error });
     }
   };
-  initClient = () => {
-    // 2. Initialize the JavaScript client library.
-    window.gapi.client
-      .init({
-        apiKey: config.apiKey,
-        // Your API key will be automatically added to the Discovery Document URLs.
-        discoveryDocs: config.discoveryDocs
-      })
-      .then(() => {
-      // 3. Initialize and make the API request.
-      load(this.onLoad);
-    });
-  };
+  // initClient = () => {
+  //   // 2. Initialize the JavaScript client library.
+  //   window.gapi.client
+  //     .init({
+  //       apiKey: config.apiKey,
+  //       // Your API key will be automatically added to the Discovery Document URLs.
+  //       discoveryDocs: config.discoveryDocs
+  //     })
+  //     .then(() => {
+  //     // 3. Initialize and make the API request.
+  //     load(this.onLoad);
+  //   });
+  // };
 
   public async getHelloMessage() {
     const msg = await getHelloMsg('Goodbye March Madness');
