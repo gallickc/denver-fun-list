@@ -2,12 +2,23 @@ import React, { Component } from 'react';
 import './App.css';
 import config from './config/credentials';
 
+async function getHelloMsg(name: string): Promise<string> {
+  const url = `/.netlify/functions/hello?name=${name}`;
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    return data.message;
+  } catch (err) {
+      console.log(err);
+  }
+  return 'Hey - sorry we failed to get a good message :(';
+}
+
 declare global {
   interface Window {
     gapi: any;
   }
 }
-
 
 export function load(callback: any) {
   window.gapi.client.load("sheets", "v4", () => {
@@ -36,12 +47,13 @@ export function load(callback: any) {
   });
 }
 
-class App extends Component<{}, { cars: any[], error: any}> {
+class App extends Component<{}, { cars: any[], error: any, helloMsg: string}> {
   constructor(props: any) {
     super(props);
     this.state = {
       cars: [],
-      error: null
+      error: null,
+      helloMsg: 'Hey There'
     }
   }
   onLoad = (data: any, error?: any) => {
@@ -65,9 +77,16 @@ class App extends Component<{}, { cars: any[], error: any}> {
       load(this.onLoad);
     });
   };
+
+  public async getHelloMessage() {
+    const msg = await getHelloMsg('Goodbye March Madness');
+    this.setState({helloMsg: msg});
+  }
+
   componentDidMount() {
     // 1. Load the JavaScript client library.
-    window.gapi.load("client", this.initClient);
+    // window.gapi.load("client", this.initClient;
+    this.getHelloMessage();
   }
   render() {
     const { cars, error } = this.state;
@@ -75,6 +94,10 @@ class App extends Component<{}, { cars: any[], error: any}> {
         return <div>{this.state.error.message}</div>;
       }
       return (
+        <div>
+          <p>
+            {this.state.helloMsg}
+          </p>
         <ul>
           {cars.map((car: any, i: number) => (
             <li key={i}>
@@ -82,6 +105,7 @@ class App extends Component<{}, { cars: any[], error: any}> {
             </li>
           ))}
         </ul>
+        </div>
       );
   }
 }
